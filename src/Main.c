@@ -1,5 +1,9 @@
 #include "XSbench_header.h"
 
+#ifdef WITH_CALIPER
+#include <caliper/cali.h>
+#endif
+
 #ifdef MPI
 #include<mpi.h>
 #endif
@@ -17,6 +21,10 @@ int main( int argc, char* argv[] )
 	double omp_start, omp_end, p_energy;
 	unsigned long long vhash = 0;
 	int nprocs;
+
+    #ifdef WITH_CALIPER
+    cali_init();
+    #endif
 
 	#ifdef MPI
 	MPI_Status stat;
