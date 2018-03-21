@@ -153,7 +153,11 @@ int main( int argc, char* argv[] )
 		fprintf(stderr, "PAPI library init error!\n");
 		exit(1);
 	}
-	#endif	
+	#endif
+
+	#ifdef WITH_CALIPER
+	CALI_MARK_BEGIN("CalculateXS");
+	#endif
 
 	// OpenMP compiler directives - declaring variables as shared or private
 	#pragma omp parallel default(none) \
@@ -251,6 +255,10 @@ int main( int argc, char* argv[] )
 		#endif
 
 	}
+
+	#ifdef WITH_CALIPER
+	CALI_MARK_END("CalculateXS");
+	#endif
 
 	#ifndef PAPI
 	if( mype == 0)	

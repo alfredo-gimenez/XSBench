@@ -6,7 +6,6 @@ void calculate_micro_xs(   double p_energy, int nuc, long n_isotopes,
                            GridPoint * restrict energy_grid,
                            NuclideGridPoint ** restrict nuclide_grids,
                            long idx, double * restrict xs_vector, int grid_type ){
-	
 	// Variables
 	double f;
 	NuclideGridPoint * low, * high;
@@ -65,7 +64,6 @@ void calculate_micro_xs(   double p_energy, int nuc, long n_isotopes,
 		printf("total_xs = %lf\n\n", xs_vector[1]);
 	}
 	*/
-	
 }
 
 // Calculates macroscopic cross section based on a given material & energy 
@@ -141,7 +139,7 @@ long grid_search( long n, double quarry, GridPoint * A)
 		
 		length = upperLimit - lowerLimit;
 	}
-	
+
 	return lowerLimit;
 }
 
@@ -164,6 +162,6 @@ long grid_search_nuclide( long n, double quarry, NuclideGridPoint * A)
 		
 		length = upperLimit - lowerLimit;
 	}
-	
+
 	return lowerLimit;
 }

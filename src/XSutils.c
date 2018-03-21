@@ -1,8 +1,16 @@
 #include "XSbench_header.h"
 
+#ifdef WITH_CALIPER
+#include <caliper/cali.h>
+#endif
+
 // Allocates nuclide matrix
 NuclideGridPoint ** gpmatrix(size_t m, size_t n)
 {
+	#ifdef WITH_CALIPER
+	CALI_MARK_FUNCTION_BEGIN;
+	#endif
+
 	int i,j;
 	NuclideGridPoint * full = (NuclideGridPoint *) malloc( m * n *
 	                          sizeof( NuclideGridPoint ) );
@@ -12,6 +20,10 @@ NuclideGridPoint ** gpmatrix(size_t m, size_t n)
 	for( i = 0, j=0; i < m*n; i++ )
 		if( i % n == 0 )
 			M[j++] = &full[i];
+
+	#ifdef WITH_CALIPER
+	CALI_MARK_FUNCTION_END;
+	#endif
 
 	return M;
 }
@@ -66,6 +78,7 @@ int binary_search( NuclideGridPoint * A, double quarry, int n )
 		else
 			return mid;
 	}
+
 	return max;
 }
 

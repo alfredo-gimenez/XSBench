@@ -1,5 +1,9 @@
 #include "XSbench_header.h"
 
+#ifdef WITH_CALIPER
+#include <caliper/cali.h>
+#endif
+
 #ifdef MPI
 #include<mpi.h>
 #endif
@@ -9,6 +13,9 @@
 // rand() is used.
 void generate_grids( NuclideGridPoint ** nuclide_grids,
                      long n_isotopes, long n_gridpoints ) {
+    #ifdef WITH_CALIPER
+	CALI_MARK_FUNCTION_BEGIN;
+    #endif
 	for( long i = 0; i < n_isotopes; i++ )
 		for( long j = 0; j < n_gridpoints; j++ )
 		{
@@ -19,11 +26,17 @@ void generate_grids( NuclideGridPoint ** nuclide_grids,
 			nuclide_grids[i][j].fission_xs   =((double)rand()/(double)RAND_MAX);
 			nuclide_grids[i][j].nu_fission_xs=((double)rand()/(double)RAND_MAX);
 		}
+    #ifdef WITH_CALIPER
+	CALI_MARK_FUNCTION_END;
+    #endif
 }
 
 // Verification version of this function (tighter control over RNG)
 void generate_grids_v( NuclideGridPoint ** nuclide_grids,
                      long n_isotopes, long n_gridpoints ) {
+    #ifdef WITH_CALIPER
+	CALI_MARK_FUNCTION_BEGIN;
+    #endif
 	for( long i = 0; i < n_isotopes; i++ )
 		for( long j = 0; j < n_gridpoints; j++ )
 		{
@@ -34,12 +47,18 @@ void generate_grids_v( NuclideGridPoint ** nuclide_grids,
 			nuclide_grids[i][j].fission_xs   = rn_v();
 			nuclide_grids[i][j].nu_fission_xs= rn_v();
 		}
+    #ifdef WITH_CALIPER
+	CALI_MARK_FUNCTION_END;
+    #endif
 }
 
 // Sorts the nuclide grids by energy (lowest -> highest)
 void sort_nuclide_grids( NuclideGridPoint ** nuclide_grids, long n_isotopes,
                          long n_gridpoints )
 {
+    #ifdef WITH_CALIPER
+	CALI_MARK_FUNCTION_BEGIN;
+    #endif
 	int (*cmp) (const void *, const void *);
 	cmp = NGP_compare;
 	
@@ -56,12 +75,19 @@ void sort_nuclide_grids( NuclideGridPoint ** nuclide_grids, long n_isotopes,
 			printf("E%d = %lf\n", j, nuclide_grids[i][j].energy);
 	}
 	*/
+    #ifdef WITH_CALIPER
+	CALI_MARK_FUNCTION_END;
+    #endif
 }
 
 // Allocates unionized energy grid, and assigns union of energy levels
 // from nuclide grids to it.
 GridPoint * generate_energy_grid( long n_isotopes, long n_gridpoints,
                                   NuclideGridPoint ** nuclide_grids) {
+    #ifdef WITH_CALIPER
+	CALI_MARK_FUNCTION_BEGIN;
+    #endif
+
 	int mype = 0;
 
 	#ifdef MPI
@@ -112,6 +138,10 @@ GridPoint * generate_energy_grid( long n_isotopes, long n_gridpoints,
 		printf("E%d = %lf\n", i, energy_grid[i].energy);
 	*/
 
+    #ifdef WITH_CALIPER
+	CALI_MARK_FUNCTION_END;
+	#endif
+
 	return energy_grid;
 }
 
@@ -122,6 +152,10 @@ GridPoint * generate_energy_grid( long n_isotopes, long n_gridpoints,
 void set_grid_ptrs( GridPoint * energy_grid, NuclideGridPoint ** nuclide_grids,
                     long n_isotopes, long n_gridpoints )
 {
+    #ifdef WITH_CALIPER
+	CALI_MARK_FUNCTION_BEGIN;
+    #endif
+
 	int mype = 0;
 
 	#ifdef MPI
@@ -159,4 +193,7 @@ void set_grid_ptrs( GridPoint * energy_grid, NuclideGridPoint ** nuclide_grids,
 				   (energy_grid[i].xs_ptrs[j])->energy
 				   );
 	*/
+    #ifdef WITH_CALIPER
+	CALI_MARK_FUNCTION_END;
+    #endif
 }

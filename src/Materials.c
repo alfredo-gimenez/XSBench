@@ -3,6 +3,10 @@
 
 #include "XSbench_header.h"
 
+#ifdef WITH_CALIPER
+#include <caliper/cali.h>
+#endif
+
 // num_nucs represents the number of nuclides that each material contains
 int * load_num_nucs(long n_isotopes)
 {
@@ -33,6 +37,10 @@ int * load_num_nucs(long n_isotopes)
 // Assigns an array of nuclide ID's to each material
 int ** load_mats( int * num_nucs, long n_isotopes )
 {
+	#ifdef WITH_CALIPER
+	CALI_MARK_FUNCTION_BEGIN;
+	#endif
+
 	int ** mats = (int **) malloc( 12 * sizeof(int *) );
 	for( int i = 0; i < 12; i++ )
 		mats[i] = (int *) malloc(num_nucs[i] * sizeof(int) );
@@ -95,12 +103,20 @@ int ** load_mats( int * num_nucs, long n_isotopes )
 			       i, j, mats[i][j]);
 	*/
 
+	#ifdef WITH_CALIPER
+	CALI_MARK_FUNCTION_END;
+	#endif
+
 	return mats;
 }
 
 // Creates a randomized array of 'concentrations' of nuclides in each mat
 double ** load_concs( int * num_nucs )
 {
+	#ifdef WITH_CALIPER
+	CALI_MARK_FUNCTION_BEGIN;
+	#endif
+
 	double ** concs = (double **)malloc( 12 * sizeof( double *) );
 	
 	for( int i = 0; i < 12; i++ )
@@ -117,12 +133,20 @@ double ** load_concs( int * num_nucs )
 			printf("concs[%d][%d] = %lf\n", i, j, concs[i][j] );
 	*/
 
+	#ifdef WITH_CALIPER
+	CALI_MARK_FUNCTION_END;
+	#endif
+
 	return concs;
 }
 
 // Verification version of this function (tighter control over RNG)
 double ** load_concs_v( int * num_nucs )
 {
+	#ifdef WITH_CALIPER
+	CALI_MARK_FUNCTION_BEGIN;
+	#endif
+
 	double ** concs = (double **)malloc( 12 * sizeof( double *) );
 	
 	for( int i = 0; i < 12; i++ )
@@ -138,6 +162,10 @@ double ** load_concs_v( int * num_nucs )
 		for( int j = 0; j < num_nucs[i]; j++ )
 			printf("concs[%d][%d] = %lf\n", i, j, concs[i][j] );
 	*/
+
+	#ifdef WITH_CALIPER
+	CALI_MARK_FUNCTION_END;
+	#endif
 
 	return concs;
 }
@@ -182,6 +210,7 @@ int pick_mat( unsigned long * seed )
 			running += dist[j];
 		if( roll < running )
 			return i;
+
 	}
 
 	return 0;
