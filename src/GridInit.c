@@ -2,6 +2,7 @@
 
 #ifdef WITH_CALIPER
 #include <caliper/cali.h>
+#include <caliper/cali_datatracker.h>
 #endif
 
 #ifdef MPI
@@ -102,6 +103,11 @@ GridPoint * generate_energy_grid( long n_isotopes, long n_gridpoints,
 	
 	GridPoint * energy_grid = (GridPoint *)malloc( n_unionized_grid_points
 	                                               * sizeof( GridPoint ) );
+	#ifdef WITH_CALIPER
+	size_t grid_dims[] = {n_isotopes, n_gridpoints};
+	CALI_DATATRACKER_TRACK_DIMENSIONAL(energy_grid, sizeof(GridPoint), grid_dims, 2);
+	#endif
+
 	if( mype == 0 ) printf("Copying and Sorting all nuclide grids...\n");
 	
 	NuclideGridPoint ** n_grid_sorted = gpmatrix( n_isotopes, n_gridpoints );
@@ -128,7 +134,12 @@ GridPoint * generate_energy_grid( long n_isotopes, long n_gridpoints,
 		fprintf(stderr,"ERROR - Out Of Memory!\n");
 		exit(1);
 	}
-	
+
+	#ifdef WITH_CALIPER
+	size_t full_dims[] = {n_isotopes, n_isotopes, n_gridpoints};
+	CALI_DATATRACKER_TRACK_DIMENSIONAL(energy_grid, sizeof(int), full_dims, 3);
+	#endif
+
 	for( long i = 0; i < n_unionized_grid_points; i++ )
 		energy_grid[i].xs_ptrs = &full[n_isotopes * i];
 	

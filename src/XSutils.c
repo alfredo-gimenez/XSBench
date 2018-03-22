@@ -2,6 +2,7 @@
 
 #ifdef WITH_CALIPER
 #include <caliper/cali.h>
+#include <caliper/cali_datatracker.h>
 #endif
 
 // Allocates nuclide matrix
@@ -14,8 +15,19 @@ NuclideGridPoint ** gpmatrix(size_t m, size_t n)
 	int i,j;
 	NuclideGridPoint * full = (NuclideGridPoint *) malloc( m * n *
 	                          sizeof( NuclideGridPoint ) );
+
+	#ifdef WITH_CALIPER
+	size_t full_dims[] = {m, n};
+	CALI_DATATRACKER_TRACK_DIMENSIONAL(full, sizeof(NuclideGridPoint), full_dims, 2);
+	#endif
+
 	NuclideGridPoint ** M = (NuclideGridPoint **) malloc( m *
 	                          sizeof(NuclideGridPoint *) );
+
+	#ifdef WITH_CALIPER
+	size_t M_dims[] = {m};
+	CALI_DATATRACKER_TRACK_DIMENSIONAL(M, sizeof(NuclideGridPoint*), M_dims, 1);
+	#endif
 
 	for( i = 0, j=0; i < m*n; i++ )
 		if( i % n == 0 )
