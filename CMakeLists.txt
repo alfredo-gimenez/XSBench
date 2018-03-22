@@ -31,6 +31,9 @@ endif()
 
 add_executable(XSBench ${SOURCE_FILES})
 
+set_property(TARGET XSBench PROPERTY C_STANDARD 99)
+target_link_libraries(XSBench m)
+
 if (caliper_FOUND)
     target_link_libraries(XSBench caliper)
 endif()
