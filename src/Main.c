@@ -23,7 +23,10 @@ int main( int argc, char* argv[] )
 	int nprocs;
 
     #ifdef WITH_CALIPER
-    cali_init();
+    cali_config_preset("CALI_CALIPER_ATTRIBUTE_PROPERTIES",
+            "function=nested:process_scope," 
+            "annotation=nested:process_scope");
+    CALI_MARK_FUNCTION_BEGIN;
     #endif
 
 	#ifdef MPI
@@ -59,6 +62,10 @@ int main( int argc, char* argv[] )
 	#ifndef BINARY_READ
 	if( mype == 0) printf("Generating Nuclide Energy Grids...\n");
 	#endif
+
+    #ifdef WITH_CALIPER
+    CALI_MARK_BEGIN("GenerateGrids");
+    #endif
 	
 	NuclideGridPoint ** nuclide_grids = gpmatrix(in.n_isotopes,in.n_gridpoints);
 	
@@ -67,6 +74,11 @@ int main( int argc, char* argv[] )
 	#else
 	generate_grids( nuclide_grids, in.n_isotopes, in.n_gridpoints );	
 	#endif
+
+    #ifdef WITH_CALIPER
+    CALI_MARK_END("GenerateGrids");
+    CALI_MARK_BEGIN("SortGrids");
+    #endif
 	
 	// Sort grids by energy
 	#ifndef BINARY_READ
@@ -101,6 +113,11 @@ int main( int argc, char* argv[] )
 		#endif
 	}
 
+    #ifdef WITH_CALIPER
+    CALI_MARK_END("SortGrids");
+    CALI_MARK_BEGIN("LoadMats");
+    #endif
+
 	#ifdef BINARY_READ
 	if( mype == 0 ) printf("Reading data from \"XS_data.dat\" file...\n");
 	binary_read(in.n_isotopes, in.n_gridpoints, nuclide_grids, energy_grid, in.grid_type);
@@ -128,6 +145,12 @@ int main( int argc, char* argv[] )
 	// =====================================================================
 	// Cross Section (XS) Parallel Lookup Simulation Begins
 	// =====================================================================
+    //
+
+	#ifdef WITH_CALIPER
+    CALI_MARK_END("LoadMats");
+    CALI_MARK_BEGIN("CalculateXS");
+	#endif
 
 	// Outer benchmark loop can loop through all possible # of threads
 	#ifdef BENCHMARK
@@ -153,10 +176,6 @@ int main( int argc, char* argv[] )
 		fprintf(stderr, "PAPI library init error!\n");
 		exit(1);
 	}
-	#endif
-
-	#ifdef WITH_CALIPER
-	CALI_MARK_BEGIN("CalculateXS");
 	#endif
 
 	// OpenMP compiler directives - declaring variables as shared or private
@@ -257,7 +276,7 @@ int main( int argc, char* argv[] )
 	}
 
 	#ifdef WITH_CALIPER
-	CALI_MARK_END("CalculateXS");
+    CALI_MARK_END("CalculateXS");
 	#endif
 
 	#ifndef PAPI
