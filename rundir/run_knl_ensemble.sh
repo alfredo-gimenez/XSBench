@@ -31,4 +31,6 @@ do
     done
 done
 
-cali-query -q "SELECT *,sum(time.duration),percentage(libpfm.counter.MEM_UOPS_RETIRED:L2_MISS_LOADS,libpfm.counter.MEM_UOPS_RETIRED:ALL_LOADS) WHERE annotation GROUP BY annotation,problem_size,problem_lookups FORMAT JSON(quote-all) ORDER BY annotation,problem_lookups,problem_size" ${CALI_CONFIG_PROFILE}*.cali > ensemble-${CALI_CONFIG_PROFILE}.json
+cali-query -q "SELECT *,sum(time.duration),percentage(libpfm.counter.MEM_UOPS_RETIRED:L2_MISS_LOADS,libpfm.counter.MEM_UOPS_RETIRED:ALL_LOADS) WHERE annotation GROUP BY annotation,problem_size,problem_lookups FORMAT JSON(quote-all) ORDER BY annotation,problem_lookups,problem_size" ${CALI_CONFIG_PROFILE}*NoHBM.cali > ensemble-NoHBM-${CALI_CONFIG_PROFILE}.json
+
+cali-query -q "SELECT *,sum(time.duration),percentage(libpfm.counter.MEM_UOPS_RETIRED:L2_MISS_LOADS,libpfm.counter.MEM_UOPS_RETIRED:ALL_LOADS) WHERE annotation GROUP BY annotation,problem_size,problem_lookups FORMAT JSON(quote-all) ORDER BY annotation,problem_lookups,problem_size" ${CALI_CONFIG_PROFILE}*FullHBM.cali > ensemble-FullHBM-${CALI_CONFIG_PROFILE}.json
