@@ -24,6 +24,9 @@ function xsrun () {
         numactl --membind=1 ./XSBench -s $1 -l $2 
 }
 
+# warmup
+./XSBench -s small -l 10000
+
 for size in small large XL
 do
     for lookups in 10000000 20000000 40000000 80000000
