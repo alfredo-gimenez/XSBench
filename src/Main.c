@@ -23,10 +23,6 @@ int main( int argc, char* argv[] )
 	int nprocs;
 
     #ifdef WITH_CALIPER
-    cali_config_preset("CALI_CALIPER_ATTRIBUTE_PROPERTIES",
-            "function=nested:process_scope," 
-            "annotation=nested:process_scope");
-    CALI_MARK_FUNCTION_BEGIN;
     #endif
 
 	#ifdef MPI
@@ -53,6 +49,19 @@ int main( int argc, char* argv[] )
 	// Print-out of Input Summary
 	if( mype == 0 )
 		print_inputs( in, nprocs, version );
+
+    #ifdef WITH_CALIPER
+    cali_config_preset("CALI_CALIPER_ATTRIBUTE_PROPERTIES",
+            "function=nested:process_scope," 
+            "annotation=nested:process_scope,"
+            "problem_size=nested:process_scope,"
+            "problem_lookups=nested:process_scope");
+
+    cali_id_t problem_size_attr = cali_create_attribute("problem_size", CALI_TYPE_STRING, CALI_ATTR_ASVALUE);
+    cali_id_t problem_lookups_attr = cali_create_attribute("problem_lookups", CALI_TYPE_INT, CALI_ATTR_ASVALUE);
+    cali_set_string(problem_size_attr, in.HM);
+    cali_set_int(problem_lookups_attr, in.lookups);
+    #endif
 
 	// =====================================================================
 	// Prepare Nuclide Energy Grids, Unionized Energy Grid, & Material Data
